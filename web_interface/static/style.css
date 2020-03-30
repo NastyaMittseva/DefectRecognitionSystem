@@ -1,0 +1,126 @@
+html{
+  width: 100%;
+  left: 0;
+  top: 0;
+}
+
+body{
+  background-color: white;
+  font-family: EPfont;
+  width: 100%;
+  left: 0;
+  top: 0;
+}
+
+#carouselExampleControls{
+	width: 90%;
+}
+
+.carousel-image{
+  width: 100%;
+  height: auto;
+}
+
+.grid-image{
+  width: 100%;
+  height: auto;
+}
+
+.column1{
+    width: 27%;
+}
+
+.column2{
+    width: 73%;
+}
+
+
+.style1{
+  background-color: #6495ED;
+  width: 90%;
+}
+
+.style2{
+  background-color: #6495ED;
+  width: 20%;
+}
+
+.style4{
+  background-color: #ff9d95;
+  width: 20%;
+}
+
+.style3{
+  background-color: #49b675;
+}
+
+.navbar-brand {
+  float: none;
+  font-size: 160% !important;
+}
+
+.navbar-custom {
+    background-color: #6495ED;
+    color: white;
+}
+
+.user_name{
+    font-size: 110%;
+}
+
+.navbar-brand{
+    font-size: 120%;
+}
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+    background-color: #6495ED;
+    width: 90%;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    cursor: inherit;
+    display: block;
+}
+
+
+table.dataTable thead tr th, table thead tr th{
+  background-color: #fff1a7;
+  border: #fff1a7 solid 1px !important;
+  border-bottom:1pt solid #fff1a7 !important;
+  border-top:1pt solid #fff1a7 !important;
+}
+
+table.dataTable tbody tr.selected {
+    background-color: #ffdead !important;
+}
+
+table.dataTable tbody .even{
+  background-color: #faebd7;
+}
+
+table.dataTable tbody .odd{
+  background-color: #fffce9;
+}
+
+table tbody tr {
+    background-color: #faebd7;
+}
+
+table.dataTable tbody tr td, table tr td{
+  border: white solid 1px !important;
+}
+
+table.dataTable, table{
+    border: white solid 1px !important;
+}

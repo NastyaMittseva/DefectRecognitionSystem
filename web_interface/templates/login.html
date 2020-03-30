@@ -1,0 +1,47 @@
+<html>
+  <head>
+       <title>Defect Recognition</title>
+       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+       <link rel="stylesheet" href="/static/style.css">
+       <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+       <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+       <script src="/static/login.js"></script>
+  </head>
+  <body>
+  <nav class="navbar navbar-dark navbar-custom navbar-expand-sm">
+      <div class="collapse navbar-collapse" id="navbar-list-3">
+        <a class="navbar-brand mx-auto">Система распознавания дефектов</a>
+      </div>
+    </nav>
+    <div class=container"><br>
+      <div class="row align-items-center justify-content-center">
+        <div class="col-md-4">
+          <form action="/login" method="post">
+            {{ form.csrf }}
+            <div class="form-group">
+              <input type="text" class="form-control" id="name" name="name" placeholder="Логин">
+              <br>
+              <input type="password" class="form-control" id="password" name="password" placeholder="Пароль">
+              <br>
+              {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="alert alert-danger alert-dismissible fade show">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    {{ message }}
+                  </div>
+                {% endfor %}
+              {% endif %}
+              {% endwith %}
+              <center>
+                <input id="login" type="submit" name="login" class="button_login btn btn-success style3" value="Войти">
+              </center>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
