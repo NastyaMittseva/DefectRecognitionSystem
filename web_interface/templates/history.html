@@ -34,31 +34,33 @@
       </div>
     </nav>
     <br>
-    <div class="table-wrapper-scroll-y my-custom-scrollbar">
-        <table id="history_results" class="table table-striped table-bordered" style="width:100%">
-          <thead>
-              <tr>
-                <th>ИД</th>
-                <th>Дата и время загрузки</th>
-                <th>Имя снимка</th>
-                <th>Операция</th>
-                <th>Результат</th>
-                <th>Время выполнения</th>
-              </tr>
-          </thead>
-          <tbody>
-             {% for item in data %}
-                <tr>
-                    <td>{{item.id}}</td>
-                    <td>{{item.datatime}}</td>
-                    <td>{{item.image_name}}</td>
-                    <td>{{item.action}}</td>
-                    <td>{{item.result}}</td>
-                    <td>{{item.time}}</td>
-                </tr>
-             {% endfor %}
-          </tbody>
-        </table>
+    <div class="container_history_results">
+        <div class="table-wrapper-scroll-y my-custom-scrollbar">
+            <table id="history_results" class="table table-striped table-bordered" style="width:100%">
+              <thead>
+                  <tr>
+                    <th>ИД</th>
+                    <th>Дата и время загрузки</th>
+                    <th>Имя снимка</th>
+                    <th>Операция</th>
+                    <th>Результат</th>
+                    <th>Время выполнения</th>
+                  </tr>
+              </thead>
+              <tbody>
+                 {% for item in data %}
+                    <tr>
+                        <td>{{item.id}}</td>
+                        <td>{{item.datatime}}</td>
+                        <td>{{item.image_name}}</td>
+                        <td>{{item.action}}</td>
+                        <td>{{item.result}}</td>
+                        <td>{{item.time}}</td>
+                    </tr>
+                 {% endfor %}
+              </tbody>
+            </table>
+        </div>
     </div>
     <!-- for bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>

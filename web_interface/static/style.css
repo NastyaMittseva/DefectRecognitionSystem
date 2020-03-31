@@ -16,6 +16,13 @@ body{
 	width: 90%;
 }
 
+div.container_current_results, div.container_history_results{
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+}
 .carousel-image{
   width: 100%;
   height: auto;
