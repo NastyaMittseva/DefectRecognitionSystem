@@ -156,7 +156,6 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
-web_interface/models/
 web_interface/temp/
 web_interface/.idea/
 web_interface/__pycache__/

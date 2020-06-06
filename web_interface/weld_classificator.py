@@ -1,6 +1,10 @@
 from keras.preprocessing import image as kImage
-from keras import backend as K
+import numpy as np
 import tensorflow as tf
+from grpc.beta import implementations
+from tensorflow_serving.apis import predict_pb2
+from tensorflow_serving.apis import prediction_service_pb2
+
 
 class WeldClassificator():
     """ Осуществляет класссификацию шва на два вида - "дефектный" и "годный".
@@ -16,20 +20,27 @@ class WeldClassificator():
         """ Получает входное изображение и нормализует его. """
         img = kImage.load_img(path_scale_weld)
         self.image = kImage.img_to_array(img)
-        self.image = self.image.reshape((1,) + self.image.shape)
+        self.image = np.expand_dims(self.image, axis=0)
         self.image /= 255.
-
-    def predict_weld_class(self, model):
+        
+    def predict_weld_class(self):
         """ Классифицирует шов. """
-        # session = tf.keras.backend.get_session()
-        # graph = session.graph
-        graph = tf.get_default_graph()
-        with graph.as_default():
-            self.result = model.predict([self.image])
+        
+        channel = implementations.insecure_channel('localhost', 8500)
+        stub = prediction_service_pb2.beta_create_PredictionService_stub(channel)
+        request = predict_pb2.PredictRequest()
+        request.model_spec.name = 'weld_classificator'
+        request.model_spec.signature_name = 'predict'
+
+        request.inputs['images'].CopyFrom(
+            tf.contrib.util.make_tensor_proto(self.image, shape=self.image.shape))
+
+        prediction = stub.Predict(request, 10.0)
+        self.result = np.array(prediction.outputs['scores'].float_val)
 
     def set_label(self):
         """ По заданному порогу присваивает метку класса. """
-        if self.result[0][0] > self.threshold:
-            return "Дефекты не найдены"
+        if self.result[0] > self.threshold:
+            return "дефекты не найдены"
         else:
-            return "Дефекты найдены"
+            return "дефекты найдены"

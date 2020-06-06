@@ -47,7 +47,7 @@ def save_png(find_metr, image, number, path_input_img, vrc_name):
     """ Определяет метр и конвертирует байты в tiff. """
     start_metr = struct.unpack('d', find_metr[1][4:12])
     finish_metr = struct.unpack('d', find_metr[1][12:20])
-    print('Линейка: от ' + str(start_metr[0]) + ' до ' + str(finish_metr[0]))
+#     print('Linear: from ' + str(start_metr[0]) + ' to ' + str(finish_metr[0]))
 
     image[number][1] = image[number][1][30:]
     if number == len(image) - 1:

@@ -1,6 +1,16 @@
 import cv2
 import numpy as np
+from skimage import io
+from skimage.measure import label, regionprops
+from grpc.beta import implementations
 import tensorflow as tf
+from tensorflow_serving.apis import predict_pb2
+from tensorflow_serving.apis import prediction_service_pb2
+from keras.preprocessing import image
+
+
+keys = {0: 'Прожёг', 1: 'Трещина', 2: 'Несплаление-подрез', 3: 'Перехват', 4: 'Непровар', 5: 'Шлаки-поры', 6: 'Обрыв шва', 7: 'Визуал. дефект'}
+
 
 class DefectClassificator():
     """
@@ -12,7 +22,8 @@ class DefectClassificator():
     def __init__(self):
         self.data = None
         self.class_mask = None
-
+        self.results = []
+        
     def check_mask_on_defects(self, path_defect_mask):
         """ Проверяет по маске, нашла ли FgSegNet_M дефекты и возвращает ответ. """
         defect_mask = cv2.imread(path_defect_mask, 0)
@@ -24,43 +35,38 @@ class DefectClassificator():
         else:
             return True
 
-    def get_defect_mask(self, path_scale_weld, path_defect_mask, path_white_bkg):
-        """
-            Формирует входные данные для Unet.
-            Сначала, весь фон закрашивается белым цветом.
-            Затем, снимок преобразуется к формату входных данных Unet.
-        """
+    def predict_classes_defects(self, path_scale_weld, path_defect_mask):
+        """ Вырезает дефекты по маске, затем для каждого дефекта предсказываются классы по топ-2. """
         processing_image = cv2.imread(path_scale_weld)
-        defect_mask = cv2.imread(path_defect_mask,0)
-        processing_image[np.where((defect_mask == [0]))] = [255, 255, 255]
-        cv2.imwrite(path_white_bkg, processing_image)
-        imgs = []
-        imgs.append(processing_image)
-        self.data = np.array(imgs)
+        defect_mask = io.imread(path_defect_mask)
+        label_mask = label(defect_mask)
+        props = regionprops(label_mask)
+        for prop in props:
+            if int(prop.bbox[0]-7) > 0 and int(prop.bbox[2]+7) < 384 and int(prop.bbox[1]-7) > 0 and int(prop.bbox[3]+7) < 1152:
+                bbox = [int(prop.bbox[0]-7), int(prop.bbox[1]-7), int(prop.bbox[2]+7), int(prop.bbox[3]+7)]
+            else:
+                bbox = prop.bbox
+            crop_defect = processing_image[bbox[0]:bbox[2],bbox[1]:bbox[3]]
+            crop_defect = np.array(cv2.resize(crop_defect, (256, 256)), dtype=np.float32)
+            crop_defect = np.expand_dims(crop_defect, axis=0)
+            crop_defect /= 255.
+            
+            channel = implementations.insecure_channel('localhost', 8500)
+            stub = prediction_service_pb2.beta_create_PredictionService_stub(channel)
+            request = predict_pb2.PredictRequest()
+            request.model_spec.name = 'defect_classificator'
+            request.model_spec.signature_name = 'predict'
 
-    def predict_classes_defects(self, model):
-        """ Предсказывает маски с дефектами по классам с помощью Unet. """
-        graph = tf.get_default_graph()
-        with graph.as_default():
-            self.class_mask = model.predict(self.data)[0]
+            request.inputs['images'].CopyFrom(
+                tf.contrib.util.make_tensor_proto(crop_defect, shape=crop_defect.shape))
 
-    def combine_and_save_mask(self, path_classification):
-        """
-            Комбинирует все предсказанные маски в одну, закрашивая каждый дефект определенным цветом,
-            и сохраняет ее.
-        """
-        combined_mask = np.zeros(self.class_mask.shape[:-1])
-        for lays in range(self.class_mask.shape[-1]):
-            combined_mask += np.round(self.class_mask[:, :, lays]) * lays
-        color_mask = np.zeros((combined_mask.shape[0], combined_mask.shape[1], 3), dtype=np.uint8)
-        color_mask[np.where((combined_mask == [0.0]))] = [0, 0, 0]
-        color_mask[np.where((combined_mask == [1.0]))] = [0, 0, 255]
-        color_mask[np.where((combined_mask == [2.0]))] = [255, 0, 0]
-        color_mask[np.where((combined_mask == [3.0]))] = [170, 170, 170]
-        color_mask[np.where((combined_mask == [4.0]))] = [255, 255, 0]
-        color_mask[np.where((combined_mask == [5.0]))] = [0, 255, 255]
-        color_mask[np.where((combined_mask == [6.0]))] = [255, 0, 255]
-        color_mask[np.where((combined_mask == [7.0]))] = [18, 255, 20]
-        color_mask[np.where((combined_mask == [8.0]))] = [255, 255, 255]
-        cv2.imwrite(path_classification, color_mask)
-
+            result = stub.Predict(request, 10.0)
+            pred = np.array(result.outputs['scores'].float_val)
+            classes = np.argsort(pred, axis=0)[-2:]
+            
+            defect_classes = {}
+            for i in range(len(classes)):
+                group = keys[classes[i]]
+                prob = pred[classes[i]]
+                defect_classes[group] = prob
+            self.results.append([bbox, defect_classes])

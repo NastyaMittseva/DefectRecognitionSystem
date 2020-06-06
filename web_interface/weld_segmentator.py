@@ -3,9 +3,12 @@ import cv2
 from keras.preprocessing import image
 from search_boundaries import *
 import tensorflow as tf
+from grpc.beta import implementations
+from tensorflow_serving.apis import predict_pb2
+from tensorflow_serving.apis import prediction_service_pb2
 
 
-class WeldSegmentator_FgSegNet_v2():
+class WeldSegmentator():
     """ Осуществляет сегментацию области шва.
         Изначально загружает данные, затем предсказывает вероятностную маску шва.
         После преобразует вероятностную маску в бинарную маску и сохраняет.
@@ -22,13 +25,18 @@ class WeldSegmentator_FgSegNet_v2():
         self.X = image.img_to_array(self.X)
         self.X = np.expand_dims(self.X, axis=0)
 
-    def predict_weld_mask(self, model):
+    def predict_weld_mask(self):
         """ Предсказывает вероятностную маску шва. """
-        print(self.X.shape)
-        graph = tf.get_default_graph()
-        with graph.as_default():
-            self.mask = model.predict(self.X, batch_size=1, verbose=1)
-        self.mask = self.mask.reshape([self.mask.shape[1], self.mask.shape[2]])
+        
+        channel = implementations.insecure_channel('localhost', 8500)
+        stub = prediction_service_pb2.beta_create_PredictionService_stub(channel)
+        request = predict_pb2.PredictRequest()
+        request.model_spec.name = 'weld_segmentator'
+        request.model_spec.signature_name = 'predict'
+        request.inputs['images'].CopyFrom(
+            tf.contrib.util.make_tensor_proto(self.X, shape=self.X.shape))
+        result = stub.Predict(request, 10.0)
+        self.mask = np.array(result.outputs['scores'].float_val).reshape([800, 800])
 
     def apply_threshold(self):
         """ Преобразовывает вероятностную маску шва в бинарную маску с использованием порога. """

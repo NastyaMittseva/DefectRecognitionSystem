@@ -3,6 +3,10 @@ import cv2
 from keras.preprocessing import image as kImage
 from skimage.transform import pyramid_gaussian
 import tensorflow as tf
+from grpc.beta import implementations
+from tensorflow_serving.apis import predict_pb2
+from tensorflow_serving.apis import prediction_service_pb2
+
 
 class DefectDetector():
     """ Осуществляет распознавание дефектов в области шва.
@@ -12,7 +16,7 @@ class DefectDetector():
     """
     def __init__(self):
         self.threshold = 0.45
-        self.data = None
+        self.data = []
         self.probs = None
         self.defect_mask = None
 
@@ -28,20 +32,29 @@ class DefectDetector():
         pyramid = tuple(pyramid_gaussian(x / 255., max_layer=2, downscale=2))
         s2.append(pyramid[1] * 255.)
         s3.append(pyramid[2] * 255.)
-        s2 = np.asarray(s2)
-        s3 = np.asarray(s3)
+        s2 = np.asarray(s2, dtype=np.float32)
+        s3 = np.asarray(s3, dtype=np.float32)
         self.data = [s1, s2, s3]
 
-    def predict_defect_mask(self, model):
-        """ Предсказывает вероятностную маску дефектов. """
-        graph = tf.get_default_graph()
-        with graph.as_default():
-            self.probs = model.predict(self.data, batch_size=1, verbose=1)
-        self.probs = self.probs.reshape([self.probs.shape[0], self.probs.shape[1], self.probs.shape[2]])
+    def predict_defect_mask(self):
+        """ Предсказывает вероятностную маску дефектов. """  
+        channel = implementations.insecure_channel('localhost', 8500)
+        stub = prediction_service_pb2.beta_create_PredictionService_stub(channel)
+        request = predict_pb2.PredictRequest()
+        request.model_spec.name = 'defect_segmentator'
+        request.model_spec.signature_name = 'predict'
+        
+        print(self.data[0].shape, self.data[1].shape, self.data[2].shape)
+        request.inputs['input1'].CopyFrom(tf.contrib.util.make_tensor_proto(self.data[0], shape=self.data[0].shape))
+        request.inputs['input2'].CopyFrom(tf.contrib.util.make_tensor_proto(self.data[1], shape=self.data[1].shape))
+        request.inputs['input3'].CopyFrom(tf.contrib.util.make_tensor_proto(self.data[2], shape=self.data[2].shape))
+
+        result = stub.Predict(request, 10.0)
+        self.probs = np.array(result.outputs['scores'].float_val).reshape([384, 1152])
 
     def apply_threshold(self):
         """ Преобразовывает вероятностную маску шва в бинарную маску с использованием порога. """
-        y = self.probs[0]
+        y = self.probs
         y[y < self.threshold] = 0.
         y[y >= self.threshold] = 1.
         self.defect_mask = y * 255

@@ -11,11 +11,14 @@ app.config['MONGODB_SETTINGS'] = {
 db = MongoEngine(app)
 
 class User(UserMixin, db.Document):
-  meta = {'collection': 'users'}
-  name = db.StringField(max_length=30)
-  password = db.StringField()
+    meta = {'collection': 'users'}
+    name = db.StringField(max_length=30)
+    password = db.StringField()
 
-name = "Sergey.Maltsev"
-password = "qwert9876"
+# name = "Sergey.Maltsev"
+# password = "qwert9876"
+name = "test"
+password = "87654321"
 hashpass = generate_password_hash(password, method='sha256')
 hey = User(name=name,password=hashpass).save()
+

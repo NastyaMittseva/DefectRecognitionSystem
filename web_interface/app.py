@@ -66,12 +66,10 @@ def init_dirs_for_user(user_temp_path):
         os.makedirs(user_temp_path + '/results_defects/result/')
         os.makedirs(user_temp_path + '/results_cls_defects/')
         os.makedirs(user_temp_path + '/results_cls_defects/defect_mask/')
-        os.makedirs(user_temp_path + '/results_cls_defects/mask_by_classes/')
-        os.makedirs(user_temp_path + '/results_cls_defects/results_by_class/')
+        os.makedirs(user_temp_path + '/results_cls_defects/results_classification/')
         os.makedirs(user_temp_path + '/results_cls_defects/results_detection/')
         os.makedirs(user_temp_path + '/results_cls_defects/scale_welds/')
         os.makedirs(user_temp_path + '/results_cls_defects/welds/')
-        os.makedirs(user_temp_path + '/results_cls_defects/white_bkg/')
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -111,29 +109,21 @@ def start():
     return render_template('start.html', name=current_user.name)
 
 
-def page_state(user_id):
-    """ Исходное состояние страницы. """
-    condition = list(history.find({'user_id': user_id}, {'created_time': 1, '_id': 0}).sort([('_id', -1)]).limit(1))
-    items = list(history.find(condition[0], {'path_to_image': 1, 'image_name': 1, 'actions': 1, '_id': False}))
-    table = []
-    imgs = []
-    for i in range(len(items)):
-        actions = items[i]['actions']
-        imgs.append({'path_to_image': items[i]['path_to_image']})
-        for j in range(len(actions)):
-            row = {'id': actions[j]['id'], 'image_name': items[i]['image_name'], 'action': actions[j]['action'],
-                   'result': actions[j]['result'], 'time': actions[j]['time']}
-            table.append(row)
-    return imgs, table
-#
-#
-# @app.route('/current_state', methods=['GET', 'POST'])
-# @login_required
-# def get_state():
-#     user_id = list(users.find({'name': current_user.name}, {}))[0]['_id']
-#     imgs, table = page_state(user_id)
-#     request_to_client = {'imgs': imgs, 'table': table}
-#     return jsonify(request_to_client)
+# def page_state(user_id):
+#     """ Исходное состояние страницы. """
+#     condition = list(history.find({'user_id': user_id}, {'created_time': 1, '_id': 0}).sort([('_id', -1)]).limit(1))
+#     print(condition)
+#     items = list(history.find(condition[0], {'path_to_image': 1, 'image_name': 1, 'actions': 1, '_id': False}))
+#     print(items)
+#     table = []
+#     imgs = []
+#     for i in range(len(items)):
+#         actions = items[i]['actions']
+#         imgs.append({'path_to_image': items[i]['path_to_image']})
+#         for j in range(len(actions)):
+#             row = {'id': actions[j]['id'], 'image_name': items[i]['image_name'], 'action': actions[j]['action'], 'result': actions[j]['result'], 'time': actions[j]['time']}
+#             table.append(row)
+#     return imgs, table
 
 
 @app.route('/history', methods=['GET', 'POST'])
@@ -145,8 +135,7 @@ def get_history():
     for i in range(len(items)):
         actions = items[i]['actions']
         for j in range(len(actions)):
-            row = {'id':actions[j]['id'], 'datatime':items[i]['created_time'],'image_name': items[i]['image_name'], 'action': actions[j]['action'],
-                   'result': actions[j]['result'], 'time': actions[j]['time']}
+            row = {'id':actions[j]['id'], 'datatime':items[i]['created_time'],'image_name': items[i]['image_name'], 'action': actions[j]['action'], 'result': actions[j]['result'], 'time': actions[j]['time']}
             data.append(row)
     return render_template('history.html', data=data, name=current_user.name)
 
@@ -154,7 +143,7 @@ def get_history():
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'vrc'])
 
 def allowed_file(filename):
-	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 def save_file_in_database(file_path, user_id, created_time, filename):
@@ -210,13 +199,13 @@ def upload_files():
     return jsonify(request_to_client)
 
 
-@app.route('/results', methods=['GET'])
-@login_required
-def get_results():
-    user_id = list(users.find({'name': current_user.name}, {}))[0]['_id']
-    _, table = page_state(user_id)
-    request_to_client = {'results': table}
-    return jsonify(request_to_client)
+# @app.route('/results', methods=['GET'])
+# @login_required
+# def get_results():
+#     user_id = list(users.find({'name': current_user.name}, {}))[0]['_id']
+#     _, table = page_state(user_id)
+#     request_to_client = {'results': table}
+#     return jsonify(request_to_client)
 
 
 @app.route('/results_as_images', methods=['GET', 'POST'])
@@ -241,9 +230,9 @@ def show_images():
                     if records[i]['actions'][j]['action'] == 'поиск шва':
                         path_to_result = path_to_image.replace('imgs', 'results_welds')
                     elif records[i]['actions'][j]['action'] == 'распознавание дефектов':
-                        path_to_result = os.path.join(app.config['TEMP_FOLDER'], str(user_id), 'results_defects', 'result', path_to_image.split('\\')[-1])
+                        path_to_result = os.path.join(app.config['TEMP_FOLDER'], str(user_id), 'results_defects', 'result', path_to_image.split('/')[-1])
                     elif records[i]['actions'][j]['action'] == 'классификация дефектов':
-                        path_to_result = os.path.join(app.config['TEMP_FOLDER'], str(user_id), 'results_cls_defects', 'results_by_class', path_to_image.split('\\')[-1])
+                        path_to_result = os.path.join(app.config['TEMP_FOLDER'], str(user_id), 'results_cls_defects', 'results_classification', path_to_image.split('/')[-1])
                     break
         results.append({"path_to_image" : path_to_image, "path_to_result": path_to_result, "description":records[i]['actions'][j]['result']})
 
@@ -272,22 +261,12 @@ def recognize_weld():
     for i in range(len(img_paths)):
         action = "поиск шва"
         result, operation_time = weld_segmentation_stage(img_paths[i], img_paths[i].replace('imgs','results_welds'))
-        # result, operation_time = "", ""
-        image_name = list(history.find({'user_id': user_id, 'path_to_image': img_paths[i]}))[0]['image_name']
+        item = list(history.find({'user_id': user_id, 'path_to_image': img_paths[i]}))[0]        
         row = {"id": str(uuid.uuid1()), "action": action, "result": result, "time": operation_time}
         history.update({'user_id': user_id, 'path_to_image': img_paths[i]}, {'$push': {'actions': row}})
-        row['image_name'] = image_name
+        row['image_name'] = item['image_name']
+#         row['created_time'] = item['created_time']
         request_to_client.append(row)
-    # condition = list(history.find({}, {'created_time': 1, '_id': 0}).sort([('_id', -1)]).limit(1))
-    # results = list(history.find(condition[0], {'image_name': 1, 'actions':1,'_id': False}))
-    #
-    # request_to_client = []
-    # for i in range(len(results)):
-    #     actions = results[i]['actions']
-    #     for j in range(len(actions)):
-    #         row = {'id':actions[j]['id'], 'image_name': results[i]['image_name'], 'action': actions[j]['action'],
-    #                'result': actions[j]['result'], 'time': actions[j]['time']}
-    #         request_to_client.append(row)
     return jsonify({'results':request_to_client})
 
 
@@ -303,30 +282,19 @@ def recognize_defects():
     for i in range(len(img_paths)):
         action = "распознавание дефектов"
 
-        weld_path = app.config['TEMP_FOLDER'] + '/' + str(user_id) + '/results_defects/welds/' + img_paths[i].split('\\')[-1]
+        weld_path = app.config['TEMP_FOLDER'] + '/' + str(user_id) + '/results_defects/welds/' + img_paths[i].split('/')[-1]
         path_scale_weld = weld_path.replace('welds', 'scale_welds')
         path_defect_mask = weld_path.replace('welds', 'defect_mask')
         path_results_detection = weld_path.replace('welds', 'result')
         result, time = defect_segmentation_stage(img_paths[i], weld_path, path_scale_weld, path_defect_mask, path_results_detection)
-        # result, time = "", ""
-
-        image_name = list(history.find({'user_id': user_id, 'path_to_image': img_paths[i]}))[0]['image_name']
+        
+        item = list(history.find({'user_id': user_id, 'path_to_image': img_paths[i]}))[0]
         row = {"id": str(uuid.uuid1()), "action": action, "result": result, "time": time}
         history.update({'user_id': user_id, 'path_to_image': img_paths[i]}, {'$push': {'actions': row}})
-        row['image_name'] = image_name
+        row['image_name'] = item['image_name']
+#         row['created_time'] = item['created_time']
         request_to_client.append(row)
-        # newvalues = {"$set": {"actions":[{"id":str(uuid.uuid1()),"action": action, "result":result, "time":time}]}}
-        # history.update_many(record, newvalues)
-    # condition = list(history.find({}, {'created_time': 1, '_id': 0}).sort([('_id', -1)]).limit(1))
-    # results = list(history.find(condition[0], {'image_name': 1, 'actions':1,'_id': False}))
-    #
-    # request_to_client = []
-    # for i in range(len(results)):
-    #     actions = results[i]['actions']
-    #     for j in range(len(actions)):
-    #         row = {'id':actions[j]['id'], 'image_name': results[i]['image_name'], 'action': actions[j]['action'],
-    #                'result': actions[j]['result'], 'time': actions[j]['time']}
-    #         request_to_client.append(row)
+
     return jsonify({'results':request_to_client})
 
 
@@ -343,35 +311,21 @@ def classify_defects():
     for i in range(len(img_paths)):
         action = "классификация дефектов"
 
-        weld_path = app.config['TEMP_FOLDER'] + '/' + str(user_id) + '/results_cls_defects/welds/' + img_paths[i].split('\\')[-1]
+        weld_path = app.config['TEMP_FOLDER'] + '/' + str(user_id) + '/results_cls_defects/welds/' + img_paths[i].split('/')[-1]
         path_scale_weld = weld_path.replace('welds', 'scale_welds')
         path_defect_mask = weld_path.replace('welds', 'defect_mask')
-        path_results_detection = weld_path.replace('welds', 'results_detection')
-        path_white_bkg = weld_path.replace('welds', 'white_bkg')
-        path_mask_by_classes = weld_path.replace('welds', 'mask_by_classes')
-        path_results_by_class = weld_path.replace('welds', 'results_by_class')
-        result, time = defect_classification_stage(img_paths[i], weld_path, path_scale_weld, path_defect_mask,
-                                                   path_results_detection, path_white_bkg, path_mask_by_classes,
-                                                   path_results_by_class)
-        # result, time = "", ""
-
-        image_name = list(history.find({'user_id': user_id, 'path_to_image': img_paths[i]}))[0]['image_name']
+        path_detection_results = weld_path.replace('welds', 'results_detection')
+        path_classification_results = weld_path.replace('welds', 'results_classification')
+        result, time = defect_classification_stage(img_paths[i], weld_path, path_scale_weld, path_defect_mask, path_detection_results,
+                                path_classification_results)
+        
+        item = list(history.find({'user_id': user_id, 'path_to_image': img_paths[i]}))[0]
         row = {"id": str(uuid.uuid1()), "action": action, "result": result, "time": time}
         history.update({'user_id': user_id, 'path_to_image': img_paths[i]}, {'$push': {'actions': row}})
-        row['image_name'] = image_name
+        row['image_name'] = item['image_name']
+#         row['created_time'] = item['created_time']
         request_to_client.append(row)
-        # newvalues = {"$set": {"actions":[{"id":str(uuid.uuid1()),"action": action, "result":result, "time":time}]}}
-        # history.update_many(record, newvalues)
-    # condition = list(history.find({}, {'created_time': 1, '_id': 0}).sort([('_id', -1)]).limit(1))
-    # results = list(history.find(condition[0], {'image_name': 1, 'actions':1,'_id': False}))
-    #
-    # request_to_client = []
-    # for i in range(len(results)):
-    #     actions = results[i]['actions']
-    #     for j in range(len(actions)):
-    #         row = {'id':actions[j]['id'], 'image_name': results[i]['image_name'], 'action': actions[j]['action'],
-    #                'result': actions[j]['result'], 'time': actions[j]['time']}
-    #         request_to_client.append(row)
+
     return jsonify({'results':request_to_client})
 
 

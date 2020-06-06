@@ -20,17 +20,6 @@ class Preprocessor():
         for i in range(2, len(img) - 2):
             self.processing_img[i] = (np.uint16(-img[i - 2]) + 8 * img[i - 1] - 8 * img[i + 1] + img[i + 2]) / 12
 
-        # семиточечная апроксимация первой производной
-        # for j in range(len(img)):
-        #     for i in range(3, len(img[j]) - 3, 1):
-        #         self.processing_img[i][j] = (-img[i - 3][j] + 9 * img[i - 2][j] - 45 * img[i - 1][j] +
-        #                                      45 * img[i + 1][j] - 9 * img[i + 2][j] + img[i + 3][j]) / 60
-
-        # пятиточечная апроксимация первой производной
-        # for j in range(len(img)):
-        #     for i in range(2, len(img[j]) - 2, 1):
-        #         self.processing_img[i][j] = (-img[i - 2][j] + 8 * img[i - 1][j] - 8 * img[i + 1][j] + img[i + 2][j]) / 12
-
     def normalize_img(self):
         """ Нормализует изображение по гистограмме интенсивности цвета. """
         hist, bins = np.histogram(self.processing_img.flatten(), 65536, [0, 65536])
