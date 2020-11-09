@@ -15,8 +15,6 @@ class User(UserMixin, db.Document):
     name = db.StringField(max_length=30)
     password = db.StringField()
 
-# name = "Sergey.Maltsev"
-# password = "qwert9876"
 name = "test"
 password = "87654321"
 hashpass = generate_password_hash(password, method='sha256')

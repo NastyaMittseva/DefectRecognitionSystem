@@ -3,7 +3,7 @@
        <title>Defect Recognition</title>
        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
        <link rel="stylesheet" href="/static/style.css">
-       <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+       <script type="text/javascript" src="http://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=VRV5SvUWujyUWsckf7BsWn9t98GFh5HK8Ur6Pz7gbPxU9UoHalTet7XEkut4Jm_yrF0HDvpWC4Pav2wSIYPJJE5O0WqX7ZK21fidfMLYr229JIlZ8OcDlX8iYt0qT-iERjZ6836ySop4_xatXtKg27Q7Tp87B5KP-zxMOhw0RdeGAX4X8deQ_4xtTy-PeME8" charset="UTF-8"></script><link rel="stylesheet" crossorigin="anonymous" href="http://gc.kis.v2.scr.kaspersky-labs.com/E3E8934C-235A-4B0E-825A-35A08381A191/abn/main.css?attr=aHR0cDovL2xvY2FsaG9zdDo4ODg4L2ZpbGVzL0RlZmVjdFByb2plY3Qvd2ViX2ludGVyZmFjZV90Zl9zZXJ2aW5nL3dlYl9pbnRlcmZhY2UvdGVtcGxhdGVzL2xvZ2luLmh0bWw_ZG93bmxvYWQ9MQ"/><script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
@@ -12,7 +12,7 @@
   <body>
   <nav class="navbar navbar-dark navbar-custom navbar-expand-sm">
       <div class="collapse navbar-collapse" id="navbar-list-3">
-        <a class="navbar-brand mx-auto">Система распознавания дефектов</a>
+        <a class="navbar-brand mx-auto">Defect recognition system</a>
       </div>
     </nav>
     <div class=container"><br>
@@ -21,9 +21,9 @@
           <form action="/login" method="post">
             {{ form.csrf }}
             <div class="form-group">
-              <input type="text" class="form-control" id="name" name="name" placeholder="Логин">
+              <input type="text" class="form-control" id="name" name="name" placeholder="Login">
               <br>
-              <input type="password" class="form-control" id="password" name="password" placeholder="Пароль">
+              <input type="password" class="form-control" id="password" name="password" placeholder="Password">
               <br>
               {% with messages = get_flashed_messages(with_categories=true) %}
               {% if messages %}
@@ -36,7 +36,7 @@
               {% endif %}
               {% endwith %}
               <center>
-                <input id="login" type="submit" name="login" class="button_login btn btn-success style3" value="Войти">
+                <input id="login" type="submit" name="login" class="button_login btn btn-success style3" value="Enter">
               </center>
             </div>
           </form>

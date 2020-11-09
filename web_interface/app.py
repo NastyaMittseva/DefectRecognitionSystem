@@ -89,9 +89,9 @@ def login():
                 init_dirs_for_user(user_temp_path)
                 return redirect(url_for('start'))
             else:
-                flash(u'Неверный логин или пароль!', 'error')
+                flash(u'Wrong login or password!', 'error')
                 return redirect(url_for('login'))
-        flash(u'Ввведите логин и пароль!', 'error')
+        flash(u'Enter username and password!', 'error')
         return redirect(url_for('login'))
     return render_template('login.html', form=form)
 
@@ -170,7 +170,7 @@ def upload_files():
     for i, uploaded_file in enumerate(uploaded_files):
         if not allowed_file(uploaded_file.filename):
             print('not allow')
-            return jsonify({'message': 'Разрешенные типы файлов:  png, jpg, jpeg, vrc'})
+            return jsonify({'message': 'Allowed file types:  png, jpg, jpeg, vrc'})
 
     for i, uploaded_file in enumerate(uploaded_files):
         # check Is Correct filename?
@@ -227,11 +227,11 @@ def show_images():
                 if records[i]['actions'][j]['id'] == id_operation:
                     path_to_image = records[i]['path_to_image']
                     path_to_result = ''
-                    if records[i]['actions'][j]['action'] == 'поиск шва':
+                    if records[i]['actions'][j]['action'] == 'weld recognition':
                         path_to_result = path_to_image.replace('imgs', 'results_welds')
-                    elif records[i]['actions'][j]['action'] == 'распознавание дефектов':
+                    elif records[i]['actions'][j]['action'] == 'defect recognition':
                         path_to_result = os.path.join(app.config['TEMP_FOLDER'], str(user_id), 'results_defects', 'result', path_to_image.split('/')[-1])
-                    elif records[i]['actions'][j]['action'] == 'классификация дефектов':
+                    elif records[i]['actions'][j]['action'] == 'defect classification':
                         path_to_result = os.path.join(app.config['TEMP_FOLDER'], str(user_id), 'results_cls_defects', 'results_classification', path_to_image.split('/')[-1])
                     break
         results.append({"path_to_image" : path_to_image, "path_to_result": path_to_result, "description":records[i]['actions'][j]['result']})
@@ -259,7 +259,7 @@ def recognize_weld():
 
     request_to_client = []
     for i in range(len(img_paths)):
-        action = "поиск шва"
+        action = "weld recognition"
         result, operation_time = weld_segmentation_stage(img_paths[i], img_paths[i].replace('imgs','results_welds'))
         item = list(history.find({'user_id': user_id, 'path_to_image': img_paths[i]}))[0]        
         row = {"id": str(uuid.uuid1()), "action": action, "result": result, "time": operation_time}
@@ -279,15 +279,16 @@ def recognize_defects():
         img_paths = get_images_from_database(user_id)
 
     request_to_client = []
+    print(img_paths)
     for i in range(len(img_paths)):
-        action = "распознавание дефектов"
+        action = "defect recognition"
 
         weld_path = app.config['TEMP_FOLDER'] + '/' + str(user_id) + '/results_defects/welds/' + img_paths[i].split('/')[-1]
         path_scale_weld = weld_path.replace('welds', 'scale_welds')
         path_defect_mask = weld_path.replace('welds', 'defect_mask')
         path_results_detection = weld_path.replace('welds', 'result')
+        print(img_paths[i])
         result, time = defect_segmentation_stage(img_paths[i], weld_path, path_scale_weld, path_defect_mask, path_results_detection)
-        
         item = list(history.find({'user_id': user_id, 'path_to_image': img_paths[i]}))[0]
         row = {"id": str(uuid.uuid1()), "action": action, "result": result, "time": time}
         history.update({'user_id': user_id, 'path_to_image': img_paths[i]}, {'$push': {'actions': row}})
@@ -309,7 +310,7 @@ def classify_defects():
 
     request_to_client = []
     for i in range(len(img_paths)):
-        action = "классификация дефектов"
+        action = "defect classification"
 
         weld_path = app.config['TEMP_FOLDER'] + '/' + str(user_id) + '/results_cls_defects/welds/' + img_paths[i].split('/')[-1]
         path_scale_weld = weld_path.replace('welds', 'scale_welds')

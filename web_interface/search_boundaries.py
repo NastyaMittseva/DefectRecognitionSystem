@@ -19,7 +19,7 @@ def check_down(y, i, img):
 
 
 def find_y1_y2(start, end, step, img):
-    """ Находит участок, на котором можно найти y1 и y2 такие, что расстояние между ними больше 100 пикселей. """
+    """ Находит участок, на котором можно найти y1 и y2 такие, что расстояние между ними больше 60 пикселей. """
     y1, y2 = 0, 0
     for i in range(start, end, step):
         for j in range(0, 1152, 1):
@@ -30,9 +30,9 @@ def find_y1_y2(start, end, step, img):
             if check_down(j, i, img):
                 y2 = j
                 break
-        if (abs(y2 - y1) > 100) and (abs(y2 - y1) < 800):
+        if (abs(y2 - y1) > 60) and (abs(y2 - y1) < 800):
             return i, y1, y2
-        elif (abs(y2 - y1) > 800) or (abs(y2 - y1) < 100):
+        elif (abs(y2 - y1) > 800) or (abs(y2 - y1) < 60):
             return 0, 0, 0
         else:
             continue

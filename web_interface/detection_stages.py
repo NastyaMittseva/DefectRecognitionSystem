@@ -32,6 +32,7 @@ def defect_segmentation_stage(img_path, weld_path, path_scale_weld, path_defect_
     weld_segmentator.save_weld_result(weld_path)
 
     weld_flag = medium_processor.find_weld_boundaries(weld_path)
+    print(weld_flag)
     if weld_flag == -1:
         return -1
     medium_processor.add_allowances()
@@ -41,8 +42,8 @@ def defect_segmentation_stage(img_path, weld_path, path_scale_weld, path_defect_
     weld_classificator.get_weld_area(path_scale_weld)
     weld_classificator.predict_weld_class()
     label = weld_classificator.set_label()
-
-    if label == "дефекты найдены":
+    
+    if label == "defects are found":
         defect_detector.prepare_input(path_scale_weld)
         defect_detector.predict_defect_mask()
         defect_detector.apply_threshold()
@@ -75,7 +76,7 @@ def defect_classification_stage(img_path, weld_path, path_scale_weld, path_defec
     weld_classificator.predict_weld_class()
     label = weld_classificator.set_label()
 
-    if label == "дефекты найдены":
+    if label == "defects are found":
         defect_detector.prepare_input(path_scale_weld)
         defect_detector.predict_defect_mask()
         defect_detector.apply_threshold()
@@ -90,9 +91,9 @@ def defect_classification_stage(img_path, weld_path, path_scale_weld, path_defec
         if exist_defects:
             postprocessor.paint_bb_and_classes(img_path, path_classification_results,
                                                defect_classificator.results, initial_boundar1, initial_boundar2)
-            label = "дефекты классифицированы"
+            label = "defects are classified"
         else:
-            label = "дефекты не классифицированы"
+            label = "defects aren't classified"
             postprocessor.scale_mask(initial_boundar1, initial_boundar2, path_defect_mask)
             postprocessor.overlay_binary_mask_on_image(img_path, path_detection_results)
 

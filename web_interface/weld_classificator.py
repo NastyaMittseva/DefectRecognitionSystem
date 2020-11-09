@@ -41,6 +41,6 @@ class WeldClassificator():
     def set_label(self):
         """ По заданному порогу присваивает метку класса. """
         if self.result[0] > self.threshold:
-            return "дефекты не найдены"
+            return "defects aren't found"
         else:
-            return "дефекты найдены"
+            return "defects are found"

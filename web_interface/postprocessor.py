@@ -3,9 +3,9 @@ import numpy as np
 from PIL import Image, ImageFont, ImageDraw
 import operator
 
-colors = {'Прожёг':(0, 0, 255), 'Трещина':(255, 0, 0), 'Несплаление-подрез': (255, 0, 255),
-          'Перехват': (255, 166, 0), 'Непровар': (255, 255, 0), 'Шлаки-поры': (0, 255, 0),
-          'Обрыв шва': (0, 191, 255), 'Визуал. дефект': (255, 192, 203)}
+colors = {'Burnout':(0, 0, 255), 'Crack':(255, 0, 0), 'Unfused-undercut': (255, 0, 255),
+          'Interception': (255, 166, 0), 'Lack of fusion': (255, 255, 0), 'Slags-Pores': (0, 255, 0),
+          'Welding break': (0, 191, 255), 'Visual defect': (255, 192, 203)}
 
 
 class Postprocessor():
@@ -68,8 +68,8 @@ class Postprocessor():
                 visual_defect = True
 
             if visual_defect:
-                prior_color = second_color = colors['Визуал. дефект']
-                output = 'id ' + str(id) + ' - Визуал. дефект: 100%'
+                prior_color = second_color = colors['Visual defect']
+                output = 'id ' + str(id) + ' - Visual defect: 100%'
             else:
                 prior_color, second_color = get_get_colors(sorted_classes)
                 # write classes for every id defect in weld

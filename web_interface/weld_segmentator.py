@@ -51,9 +51,9 @@ class WeldSegmentator():
         """ Определяет, найден ли шов или нет. """
         i, y1, y2 = find_last_ys(self.weld_mask)
         if y1 == 0 and y2 == 0 and i == 0:
-            return "шов не найден"
+            return "weld isn't found"
         else:
-            return "шов найден"
+            return "weld is found"
 
     def save_weld_result(self, path_weld_mask):
         """ Сохраняет маску. """

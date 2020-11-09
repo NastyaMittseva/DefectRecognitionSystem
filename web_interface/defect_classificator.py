@@ -9,7 +9,7 @@ from tensorflow_serving.apis import prediction_service_pb2
 from keras.preprocessing import image
 
 
-keys = {0: 'Прожёг', 1: 'Трещина', 2: 'Несплаление-подрез', 3: 'Перехват', 4: 'Непровар', 5: 'Шлаки-поры', 6: 'Обрыв шва', 7: 'Визуал. дефект'}
+keys = {0: 'Burnout', 1: 'Crack', 2: 'Unfused-undercut', 3: 'Interception', 4: 'Lack of fusion', 5: 'Slags-Pores', 6: 'Welding break', 7: 'Visual defect'}
 
 
 class DefectClassificator():

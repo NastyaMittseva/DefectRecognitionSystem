@@ -104,7 +104,7 @@ $(function() {
     });
 
     if ($('#carouselContainer .carousel-item').length < 1) {
-        alert("Загрузите изображения!");
+        alert("Load images!");
         return false;
     }
     $.ajax({
@@ -131,7 +131,7 @@ $(function() {
     });
 
     if ($('#carouselContainer .carousel-item').length < 1) {
-        alert("Загрузите изображения!");
+        alert("Load images!");
         return false;
     }
     $.ajax({
@@ -158,7 +158,7 @@ $(function() {
     });
 
     if ($('#carouselContainer .carousel-item').length < 1) {
-        alert("Загрузите изображения!");
+        alert("Load images!");
         return false;
     }
     $.ajax({
@@ -229,11 +229,11 @@ $(function() {
           success: function (response) {
             $('#gridContainer').html('');
             if (response['results'] != '' && response['results'] != 'undefined' && response['results'] != 'none'){
-                 var value = '<br><br><table><thead><tr><th colspan="2" style="text-align:center; color:#000000; font-size:20px">Результаты распознавания</th></tr>';
-                 value += '<tr><th style="text-align:center">Исходный снимок</th><th style="text-align:center">Результат</th></tr></thead>'
+                 var value = '<br><br><table><thead><tr><th colspan="2" style="text-align:center; color:#000000; font-size:20px">Recognition results</th></tr>';
+                 value += '<tr><th style="text-align:center">Original shot</th><th style="text-align:center">Result</th></tr></thead>'
             }
             else{
-                alert('Результаты не выбраны!')
+                alert('Results are not selected!')
             }
 
             $.each(response['results'], function (key, data) {
@@ -241,7 +241,7 @@ $(function() {
                 value += `<td><img src="${data['path_to_image']}" class="grid-image" alt="Изображения"></td>`;
                 value += `<td><img src="${data['path_to_result']}" class="grid-image" alt="Изображения"></td>`;
                 value += '</tr>';
-                value += `<tr><td colspan="2">Описание: ${data['description']}</td></tr>`;
+                value += `<tr><td colspan="2">Description: ${data['description']}</td></tr>`;
 
             });
             value += '</table>';
