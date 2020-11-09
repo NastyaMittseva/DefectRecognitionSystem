@@ -19,6 +19,8 @@ from datetime import timedelta
 from preprocessor import Preprocessor
 from data_handler import DataHandler
 from detection_stages import *
+import random
+from shutil import copyfile
 
 
 app = Flask(__name__)
@@ -109,23 +111,6 @@ def start():
     return render_template('start.html', name=current_user.name)
 
 
-# def page_state(user_id):
-#     """ Исходное состояние страницы. """
-#     condition = list(history.find({'user_id': user_id}, {'created_time': 1, '_id': 0}).sort([('_id', -1)]).limit(1))
-#     print(condition)
-#     items = list(history.find(condition[0], {'path_to_image': 1, 'image_name': 1, 'actions': 1, '_id': False}))
-#     print(items)
-#     table = []
-#     imgs = []
-#     for i in range(len(items)):
-#         actions = items[i]['actions']
-#         imgs.append({'path_to_image': items[i]['path_to_image']})
-#         for j in range(len(actions)):
-#             row = {'id': actions[j]['id'], 'image_name': items[i]['image_name'], 'action': actions[j]['action'], 'result': actions[j]['result'], 'time': actions[j]['time']}
-#             table.append(row)
-#     return imgs, table
-
-
 @app.route('/history', methods=['GET', 'POST'])
 @login_required
 def get_history():
@@ -199,14 +184,27 @@ def upload_files():
     return jsonify(request_to_client)
 
 
-# @app.route('/results', methods=['GET'])
-# @login_required
-# def get_results():
-#     user_id = list(users.find({'name': current_user.name}, {}))[0]['_id']
-#     _, table = page_state(user_id)
-#     request_to_client = {'results': table}
-#     return jsonify(request_to_client)
+@app.route('/test_images', methods=['GET', 'POST'])
+@login_required
+def upload_test_files():
+    path_examples = 'static/examples/'
+    files = os.listdir(path_examples)
+    user_id = list(users.find({'name': current_user.name}, {}))[0]['_id']
+    created_time = datetime.datetime.now().replace(microsecond=0)
+    file = random.choice(files)
+    
+    filename = secure_filename(file)
+    file_path = os.path.join(app.root_path, app.config['TEMP_FOLDER'], str(user_id), 'imgs', filename)
+    copyfile(path_examples + file, file_path)
+    
+    save_file_in_database(file_path, user_id, created_time, filename)
+    
+    condition = list(history.find({'user_id': user_id}, {'created_time':1, '_id':0}).sort([('_id', -1)]).limit(1))
+    imgs = list(history.find(condition[0],{'path_to_image':1, '_id': False}))
+    request_to_client = {'imgs':imgs}
 
+    return jsonify(request_to_client)
+      
 
 @app.route('/results_as_images', methods=['GET', 'POST'])
 @login_required

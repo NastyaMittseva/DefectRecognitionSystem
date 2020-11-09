@@ -95,7 +95,36 @@ $(function() {
       }
     });
   });
-
+  
+    
+  // загрузка тестовых изображений
+  $('body').on('click', '#load_test', function(){
+    $("#spinner").removeAttr("hidden");
+    $('#carouselExampleControls').attr('hidden', 'hidden');
+    $.ajax({
+      url: '/test_images',
+      dataType: 'json',
+      cache: false,
+      contentType: false,
+      processData: false,
+      data: false,
+      type: 'post',
+      success: function (response) {
+        if (response['message'] === undefined){
+            $('#spinner').attr('hidden', 'hidden');
+            $("#carouselExampleControls").removeAttr("hidden");
+            get_carousel(response['imgs']);
+            $('#upload_image').val('');
+            var dataToStore = JSON.stringify(response['imgs']);
+            localStorage.setItem('carousel', dataToStore);
+        }
+        else {
+            alert(response['message']);
+        }
+      }
+    });
+  });
+    
   // распознавание шва
   $('body').on('click', '#recognize_weld', function(){
     var form_data = new FormData();

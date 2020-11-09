@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="/static/style.css">
-    <script type="text/javascript" src="http://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=TCtcY3qQbh7sP9xUru8FIWDgJoAuDK0Zn6VPFRy9gS-udFSRgX7UEZay2XRQar6edKfuJ2Ka8AxlHnyjf3dC9pRC1sxTxQVKtwYlsAkn8E4iDlnsz4GVwXmGpsVdnkINZkz48xivjeisAyj1cmHpRPY6y9mNyX0iLKMbqQDD_uv9LVTGPMllowRh1WqFBd9-" charset="UTF-8"></script><link rel="stylesheet" crossorigin="anonymous" href="http://gc.kis.v2.scr.kaspersky-labs.com/E3E8934C-235A-4B0E-825A-35A08381A191/abn/main.css?attr=aHR0cDovL2xvY2FsaG9zdDo4ODg4L2ZpbGVzL0RlZmVjdFByb2plY3Qvd2ViX2ludGVyZmFjZV90Zl9zZXJ2aW5nL3dlYl9pbnRlcmZhY2UvdGVtcGxhdGVzL3N0YXJ0Lmh0bWw_ZG93bmxvYWQ9MQ"/><script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="http://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=IAnjGh9ZJASsQGzGZqfsv-ti1Xx0gvTj5m1b1aXlAraN_hBsPuVgXhAShRQA1NsNeJLT5Au1YHIoN4-esGxf0Bunk8MLfXMUkZluYo0yI8t8skGieHX4xD7FD1QkYJqflx18ua1Qv47mQTanZ-XBOqOj1lDNeg6-zx_yOFD9IxIx-Pz1H80-Bj7oINA4gBTD" charset="UTF-8"></script><link rel="stylesheet" crossorigin="anonymous" href="http://gc.kis.v2.scr.kaspersky-labs.com/E3E8934C-235A-4B0E-825A-35A08381A191/abn/main.css?attr=aHR0cDovL2xvY2FsaG9zdDo4ODg5L2ZpbGVzL0RlZmVjdFByb2plY3Qvd2ViX2ludGVyZmFjZV90Zl9zZXJ2aW5nL3dlYl9pbnRlcmZhY2UvdGVtcGxhdGVzL3N0YXJ0Lmh0bWw_ZG93bmxvYWQ9MQ"/><script type="text/javascript" src="http://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=TCtcY3qQbh7sP9xUru8FIWDgJoAuDK0Zn6VPFRy9gS-udFSRgX7UEZay2XRQar6edKfuJ2Ka8AxlHnyjf3dC9pRC1sxTxQVKtwYlsAkn8E4iDlnsz4GVwXmGpsVdnkINZkz48xivjeisAyj1cmHpRPY6y9mNyX0iLKMbqQDD_uv9LVTGPMllowRh1WqFBd9-" charset="UTF-8"></script><link rel="stylesheet" crossorigin="anonymous" href="http://gc.kis.v2.scr.kaspersky-labs.com/E3E8934C-235A-4B0E-825A-35A08381A191/abn/main.css?attr=aHR0cDovL2xvY2FsaG9zdDo4ODg4L2ZpbGVzL0RlZmVjdFByb2plY3Qvd2ViX2ludGVyZmFjZV90Zl9zZXJ2aW5nL3dlYl9pbnRlcmZhY2UvdGVtcGxhdGVzL3N0YXJ0Lmh0bWw_ZG93bmxvYWQ9MQ"/><script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.20/datatables.min.css"/>
     <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.20/datatables.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
@@ -60,8 +60,14 @@
               </a>
             </div>
             <br>
-            <div class="btn btn-info btn-file">Choose file<input type="file" id="upload_image" multiple></div>
-            <br>
+			{% if name == 'test' %}
+				<div class="mg_top">
+				  <input type="button" id="load_test" name="button_upload" class="btn btn-info style1" value="Load test image">
+				</div>
+			{% else %}
+				<div class="btn btn-info btn-file">Choose file<input type="file" id="upload_image" multiple></div>
+				<br>
+			{% endif %}
             <br>
             <div class="mg_top">
               <input type="button" id="recognize_weld" name="button_upload" class="btn btn-info style1" value="Weld recognition">
