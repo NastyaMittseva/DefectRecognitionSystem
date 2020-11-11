@@ -9,7 +9,9 @@
 ![](https://github.com/NastyaMittseva/DefectRecognitionSystem/blob/master/screens/load_image.png)
 После можно выбрать одно из трех видов распознавания - распознавание области шва, распознавание дефектов или классификация дефектов. Результаты распознавания записываются в таблицу.
 ![](https://github.com/NastyaMittseva/DefectRecognitionSystem/blob/master/screens/results.png)
-В таблице с результатами можно выбрать одну или несколько строки и нажать на кнопку "Show results". Результаты распозавания отобразятся в графическом виде ниже. 
+В таблице с результатами можно выбрать одну или несколько строк и нажать на кнопку "Show results". Результаты распозавания отобразятся в графическом виде с описанием ниже. 
 ![](https://github.com/NastyaMittseva/DefectRecognitionSystem/blob/master/screens/weld_recognition.png)
 ![](https://github.com/NastyaMittseva/DefectRecognitionSystem/blob/master/screens/defect_recognition.png)
 ![](https://github.com/NastyaMittseva/DefectRecognitionSystem/blob/master/screens/defect_classification.png)
+Также можно просматривать всю историю распознавания изображений, которые были загружены текущим пользователем. Для этого необходимо в правом верхнем углу сменить страницу на "Events history".
+![](https://github.com/NastyaMittseva/DefectRecognitionSystem/blob/master/screens/history.png)
