@@ -15,3 +15,4 @@
 ![](https://github.com/NastyaMittseva/DefectRecognitionSystem/blob/master/screens/defect_classification.png)
 Также можно просматривать всю историю распознавания изображений, которые были загружены текущим пользователем. Для этого необходимо в правом верхнем углу сменить страницу на "Events history".
 ![](https://github.com/NastyaMittseva/DefectRecognitionSystem/blob/master/screens/history.png)
+В полной версии функционал не отличается, едиственное отличие - пользователю предоставляется возможность загружать снимки в форматах .jpg, .png, а также и в рентгеновском формате .VRC.
