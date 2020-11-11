@@ -4,5 +4,5 @@
 Разработанный веб-интерфейс предоставляет 2 версии приложения - демонстрационную (ограниченную) и полную. Демонстрационная версия размещена по адресу http://37.75.252.29:1236/, логин: test, пароль:87654321.
 
 Для входа в систему необходимо пройти авторизацию, и затем вы попадете на главную страницу приложения.
-![alt text](https://github.com/NastyaMittseva/DefectRecognitionSystem/blob/master/screens/login.png)
+![alt text](https://github.com/NastyaMittseva/DefectRecognitionSystem/blob/master/screens/main.png)
 
